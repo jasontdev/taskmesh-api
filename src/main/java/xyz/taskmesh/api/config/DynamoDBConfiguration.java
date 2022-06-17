@@ -12,7 +12,7 @@ import java.net.URI;
 @Configuration
 public class DynamoDBConfiguration {
 
-    @Value("$(dynamodb.endpoint)")
+    @Value("${database.endpoint}")
     private String endpoint;
 
     @Bean
