@@ -50,12 +50,7 @@ public class TasklistRepositoryTests {
     void saveTasklist() {
         var userId = "user_" + UUID.randomUUID();
         var tasklistId = "tasklist_" + UUID.randomUUID();
-
-        var tasklist = new Tasklist();
-        tasklist.setUserId(userId);
-        tasklist.setTasklistId(tasklistId);
-        tasklist.setName("Testing, testing, 123");
-
+        var tasklist = new Tasklist(tasklistId, userId, "Testing, testing, 123");
         tasklistRepository.create(tasklist);
 
         var savedTasklistUser = dynamoDbEnhancedClient
