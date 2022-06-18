@@ -23,14 +23,8 @@ public class TasklistRepository {
     DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
     public Tasklist create(Tasklist tasklist) {
-        var tasklistUser = new TasklistUser();
-        tasklistUser.setTasklistId(tasklist.getTasklistId());
-        tasklistUser.setUserId(tasklist.getUserId());
-
-        var userTasklist = new UserTasklist();
-        userTasklist.setUserId(tasklist.getUserId());
-        userTasklist.setTasklistId(tasklist.getTasklistId());
-        userTasklist.setName(tasklist.getName());
+        var tasklistUser = new TasklistUser(tasklist.getTasklistId(), tasklist.getUserId());
+        var userTasklist = new UserTasklist(tasklist.getUserId(), tasklist.getTasklistId(), tasklist.getName());
 
         try {
             dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class)).putItem(tasklistUser);
@@ -39,7 +33,6 @@ public class TasklistRepository {
             return tasklist;
         } catch(DynamoDbException e) {
             System.err.printf("tasklistRepository.create() error: %s\n", e.getMessage());
-
             return null;
         }
     }
