@@ -1,14 +1,18 @@
 package xyz.taskmesh.api.model;
 
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 public class UserTasklist {
     private String userId;
     private String tasklistId;
+    private String name;
 
     @DynamoDbPartitionKey
+    @DynamoDbAttribute("pk")
     public String getUserId() {
         return userId;
     }
@@ -17,12 +21,21 @@ public class UserTasklist {
         this.userId = userId;
     }
 
-    @DynamoDbPartitionKey
+    @DynamoDbSortKey
+    @DynamoDbAttribute("sk")
     public String getTasklistId() {
         return tasklistId;
     }
 
     public void setTasklistId(String tasklistId) {
         this.tasklistId = tasklistId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
