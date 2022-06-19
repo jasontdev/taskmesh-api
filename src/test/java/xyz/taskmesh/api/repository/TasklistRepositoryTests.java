@@ -32,11 +32,6 @@ public class TasklistRepositoryTests {
     @Value("${database.tablename}")
     private String tablename;
 
-    @Test
-    void taskRepositoryIsInjectible() {
-        Assertions.assertNotNull(tasklistRepository);
-    }
-
     @BeforeEach
     public void init() {
         dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class)).createTable();
@@ -45,6 +40,11 @@ public class TasklistRepositoryTests {
     @AfterEach
     public void clean() {
         dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(UserTasklist.class)).deleteTable();
+    }
+
+    @Test
+    void taskRepositoryIsInjectible() {
+        Assertions.assertNotNull(tasklistRepository);
     }
 
     @Test
