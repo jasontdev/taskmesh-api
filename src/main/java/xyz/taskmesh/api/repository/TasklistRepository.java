@@ -7,17 +7,12 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
-import xyz.taskmesh.api.model.Task;
 import xyz.taskmesh.api.model.Tasklist;
 import xyz.taskmesh.api.model.TasklistUser;
 import xyz.taskmesh.api.model.UserTasklist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class TasklistRepository {
