@@ -66,7 +66,7 @@ public class TasklistRepositoryTests {
     }
 
     @Test
-    void getAllByUserSingleTasklist() {
+    void findByUserIdSingleTasklist() {
         var userId = "user_" + UUID.randomUUID();
         var tasklistId = "tasklist_" + UUID.randomUUID();
         var tasklist = new Tasklist(tasklistId, userId, "Testing tasklist");
@@ -77,7 +77,7 @@ public class TasklistRepositoryTests {
     }
 
     @Test
-    void getAllByUserMultipleTasklists() {
+    void findByUserIdMultipleTasklists() {
         var userId = "user_" + UUID.randomUUID();
         var tasklistIdOne = "tasklist_" + UUID.randomUUID();
         var tasklistOne = new Tasklist(tasklistIdOne, userId, "Testing tasklist");
@@ -88,7 +88,13 @@ public class TasklistRepositoryTests {
         tasklistRepository.create(tasklistTwo); // TODO: remove dependency on testable method
 
         var tasklists = tasklistRepository.findByUserId(userId);
+        Assertions.assertEquals(2, tasklists.size());
         Assertions.assertEquals(2, tasklists.stream()
                 .filter(tasklist -> tasklist.equals(tasklistOne) || tasklist.equals(tasklistTwo)).count());
+    }
+
+    @Test
+    void findByUserIdNoLists() {
+        Assertions.assertEquals(0, tasklistRepository.findByUserId("user_" + UUID.randomUUID()).size());
     }
 }
