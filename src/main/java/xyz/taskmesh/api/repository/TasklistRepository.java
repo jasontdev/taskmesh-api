@@ -13,6 +13,7 @@ import xyz.taskmesh.api.model.TasklistUser;
 import xyz.taskmesh.api.model.UserTasklist;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TasklistRepository {
@@ -23,7 +24,7 @@ public class TasklistRepository {
     @Autowired
     DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
-    public Tasklist create(Tasklist tasklist) {
+    public Optional<Tasklist> create(Tasklist tasklist) {
         var tasklistUser = new TasklistUser(tasklist.getTasklistId(), tasklist.getUserId());
         var userTasklist = new UserTasklist(tasklist.getUserId(), tasklist.getTasklistId(), tasklist.getName());
 
@@ -31,10 +32,10 @@ public class TasklistRepository {
             dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class)).putItem(tasklistUser);
             dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(UserTasklist.class)).putItem(userTasklist);
 
-            return tasklist;
+            return Optional.of(tasklist);
         } catch (DynamoDbException e) {
             System.err.printf("tasklistRepository.create() error: %s\n", e.getMessage());
-            return null;
+            return Optional.empty();
         }
     }
 
