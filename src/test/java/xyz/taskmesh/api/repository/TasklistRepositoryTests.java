@@ -15,6 +15,7 @@ import xyz.taskmesh.api.model.Tasklist;
 import xyz.taskmesh.api.model.TasklistUser;
 import xyz.taskmesh.api.model.UserTasklist;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @SpringBootTest
@@ -62,5 +63,32 @@ public class TasklistRepositoryTests {
 
         Assertions.assertNotNull(savedTasklistUser);
         Assertions.assertNotNull(savedUserTasklist);
+    }
+
+    @Test
+    void getAllByUserSingleTasklist() {
+        var userId = "user_" + UUID.randomUUID();
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var tasklist = new Tasklist(tasklistId, userId, "Testing tasklist");
+        tasklistRepository.create(tasklist); // TODO: remove dependency on testable method
+
+        var tasklists = tasklistRepository.findByUserId(userId);
+        Assertions.assertEquals(tasklist, tasklists.get(0));
+    }
+
+    @Test
+    void getAllByUserMultipleTasklists() {
+        var userId = "user_" + UUID.randomUUID();
+        var tasklistIdOne = "tasklist_" + UUID.randomUUID();
+        var tasklistOne = new Tasklist(tasklistIdOne, userId, "Testing tasklist");
+        tasklistRepository.create(tasklistOne); // TODO: remove dependency on testable method
+
+        var tasklistIdTwo = "tasklist_" + UUID.randomUUID();
+        var tasklistTwo = new Tasklist(tasklistIdTwo, userId, "Testing tasklist two");
+        tasklistRepository.create(tasklistTwo); // TODO: remove dependency on testable method
+
+        var tasklists = tasklistRepository.findByUserId(userId);
+        Assertions.assertEquals(2, tasklists.stream()
+                .filter(tasklist -> tasklist.equals(tasklistOne) || tasklist.equals(tasklistTwo)).count());
     }
 }

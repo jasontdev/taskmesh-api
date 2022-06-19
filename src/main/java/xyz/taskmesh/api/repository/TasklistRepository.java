@@ -4,13 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import xyz.taskmesh.api.model.Task;
 import xyz.taskmesh.api.model.Tasklist;
 import xyz.taskmesh.api.model.TasklistUser;
 import xyz.taskmesh.api.model.UserTasklist;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,9 +37,21 @@ public class TasklistRepository {
             dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(UserTasklist.class)).putItem(userTasklist);
 
             return tasklist;
-        } catch(DynamoDbException e) {
+        } catch (DynamoDbException e) {
             System.err.printf("tasklistRepository.create() error: %s\n", e.getMessage());
             return null;
         }
+    }
+
+    public List<Tasklist> findByUserId(String userId) {
+        // TODO: Returning a tasklist with null tasks[]. Should be a distinct type.
+        var conditions =
+                QueryConditional.sortBeginsWith(Key.builder().partitionValue(userId).sortValue("tasklist_").build());
+
+        var queryResult = dynamoDbEnhancedClient
+                .table(tablename, TableSchema.fromBean(UserTasklist.class))
+                .query(r -> r.queryConditional(conditions))
+                .items();
+        return queryResult.stream().map(i -> new Tasklist(i.getTasklistId(), i.getUserId(), i.getName())).toList();
     }
 }
