@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import xyz.taskmesh.api.model.Task;
 
 import java.util.UUID;
@@ -59,5 +60,26 @@ public class TaskRepositoryTests {
                 .getItem(Key.builder().partitionValue(tasklistId).sortValue(taskId).build());
 
         Assertions.assertEquals(task, savedTask);
+    }
+
+    @Test
+    public void findTasksByTasklistId() {
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var taskIdOne = "task_" + UUID.randomUUID();
+        var taskIdTwo = "task_" + UUID.randomUUID();
+
+        var taskOne = new Task(tasklistId, taskIdOne, "Testing task 1");
+        var taskTwo = new Task(tasklistId, taskIdTwo, "Testing task 2");
+
+        taskRepository.create(taskOne);
+        taskRepository.create(taskTwo);
+
+        var savedTasks = dynamoDbEnhancedClient
+                .table(tablename, TableSchema.fromBean(Task.class))
+                .query(QueryConditional.sortBeginsWith(Key.builder().partitionValue(tasklistId).sortValue("task_").build()))
+                .items().stream().toList();
+
+        Assertions.assertTrue(savedTasks.stream().allMatch(task -> task.equals(taskOne) || task.equals(taskTwo)));
+        Assertions.assertEquals(2, (long) savedTasks.size());
     }
 }
