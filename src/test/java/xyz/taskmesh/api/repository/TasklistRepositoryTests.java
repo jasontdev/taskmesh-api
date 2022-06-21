@@ -1,13 +1,15 @@
 package xyz.taskmesh.api.repository;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.Assert;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -15,7 +17,6 @@ import xyz.taskmesh.api.model.Tasklist;
 import xyz.taskmesh.api.model.TasklistUser;
 import xyz.taskmesh.api.model.UserTasklist;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @SpringBootTest
@@ -72,8 +73,8 @@ public class TasklistRepositoryTests {
         var tasklist = new Tasklist(tasklistId, userId, "Testing tasklist");
         tasklistRepository.create(tasklist); // TODO: remove dependency on testable method
 
-        var tasklists = tasklistRepository.findByUserId(userId);
-        Assertions.assertEquals(tasklist, tasklists.get(0));
+        var tasklists = tasklistRepository.findUserTasklistByUserId(userId);
+        Assertions.assertEquals(tasklist.getTasklistId(), tasklists.get(0).getTasklistId());
     }
 
     @Test
@@ -87,14 +88,15 @@ public class TasklistRepositoryTests {
         var tasklistTwo = new Tasklist(tasklistIdTwo, userId, "Testing tasklist two");
         tasklistRepository.create(tasklistTwo); // TODO: remove dependency on testable method
 
-        var tasklists = tasklistRepository.findByUserId(userId);
+        var tasklists = tasklistRepository.findUserTasklistByUserId(userId);
         Assertions.assertEquals(2, tasklists.size());
         Assertions.assertEquals(2, tasklists.stream()
-                .filter(tasklist -> tasklist.equals(tasklistOne) || tasklist.equals(tasklistTwo)).count());
+                .filter(tasklist -> tasklist.getTasklistId().equals(tasklistOne.getTasklistId())
+                        || tasklist.getTasklistId().equals(tasklistTwo.getTasklistId())).count());
     }
 
     @Test
     void findByUserIdNoLists() {
-        Assertions.assertEquals(0, tasklistRepository.findByUserId("user_" + UUID.randomUUID()).size());
+        Assertions.assertEquals(0, tasklistRepository.findUserTasklistByUserId("user_" + UUID.randomUUID()).size());
     }
 }

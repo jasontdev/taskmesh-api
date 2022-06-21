@@ -39,7 +39,7 @@ public class TasklistRepository {
         }
     }
 
-    public List<Tasklist> findByUserId(String userId) {
+    public List<UserTasklist> findUserTasklistByUserId(String userId) {
         // TODO: Returning a tasklist with null tasks[]. Should be a distinct type.
         var conditions =
                 QueryConditional.sortBeginsWith(Key.builder().partitionValue(userId).sortValue("tasklist_").build());
@@ -48,6 +48,6 @@ public class TasklistRepository {
                 .table(tablename, TableSchema.fromBean(UserTasklist.class))
                 .query(r -> r.queryConditional(conditions))
                 .items();
-        return queryResult.stream().map(i -> new Tasklist(i.getTasklistId(), i.getUserId(), i.getName())).toList();
+        return queryResult.stream().toList();
     }
 }
