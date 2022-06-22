@@ -82,4 +82,21 @@ public class TaskRepositoryTests {
         Assertions.assertTrue(savedTasks.stream().allMatch(task -> task.equals(taskOne) || task.equals(taskTwo)));
         Assertions.assertEquals(2, (long) savedTasks.size());
     }
+
+    @Test
+    public void updateTask() {
+
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var taskId = "task_" + UUID.randomUUID();
+        var task = new Task(tasklistId, taskId, "This task needs to be updated");
+
+        var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
+        table.putItem(task);
+
+        task.setName("Task has been updated");
+        taskRepository.update(task);
+
+        var updatedItem = table.getItem(Key.builder().partitionValue(tasklistId).sortValue(taskId).build());
+        Assertions.assertEquals("Task has been updated", updatedItem.getName());
+    }
 }

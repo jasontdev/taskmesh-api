@@ -23,11 +23,22 @@ public class TaskRepository {
     @Autowired
     private DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
-    public Optional<Task> create(Task newTasklist) {
+    public Optional<Task> create(Task task) {
         var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
         try {
-            table.putItem(newTasklist);
-            return Optional.of(newTasklist);
+            table.putItem(task);
+            return Optional.of(task);
+        } catch (DynamoDbException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Task> update(Task task) {
+        var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
+        try {
+            table.updateItem(task);
+            return Optional.of(task);
         } catch (DynamoDbException e) {
             System.out.println(e.getMessage());
             return Optional.empty();
