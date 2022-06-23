@@ -21,8 +21,12 @@ public class TasklistRepository {
     @Value("${database.tablename}")
     private String tablename;
 
-    @Autowired
+    final
     DynamoDbEnhancedClient dynamoDbEnhancedClient;
+
+    public TasklistRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
+    }
 
     public Optional<Tasklist> create(Tasklist tasklist) {
         var tasklistUser = new TasklistUser(tasklist.getTasklistId(), tasklist.getUserId());

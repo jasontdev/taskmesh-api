@@ -20,8 +20,11 @@ public class TaskRepository {
     @Value("${database.tablename}")
     private String tablename;
 
-    @Autowired
-    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
+
+    public TaskRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
+        this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
+    }
 
     public Optional<Task> create(Task task) {
         var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
