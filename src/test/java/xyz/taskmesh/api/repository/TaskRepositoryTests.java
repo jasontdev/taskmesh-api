@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.Assert;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -85,7 +86,6 @@ public class TaskRepositoryTests {
 
     @Test
     public void updateTask() {
-
         var tasklistId = "tasklist_" + UUID.randomUUID();
         var taskId = "task_" + UUID.randomUUID();
         var task = new Task(tasklistId, taskId, "This task needs to be updated");
@@ -98,5 +98,29 @@ public class TaskRepositoryTests {
 
         var updatedItem = table.getItem(Key.builder().partitionValue(tasklistId).sortValue(taskId).build());
         Assertions.assertEquals("Task has been updated", updatedItem.getName());
+    }
+
+    @Test
+    public void deleteTask() {
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var taskId = "task_" + UUID.randomUUID();
+        var task = new Task(tasklistId, taskId, "This task needs to be deleted");
+
+        var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
+        table.putItem(task);
+
+        taskRepository.delete(task);
+        var deletedItem = table.getItem(task);
+        Assertions.assertNull(deletedItem);
+    }
+
+    @Test
+    public void deleteTaskWrongId() {
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var taskId = "task_" + UUID.randomUUID();
+        var task = new Task(tasklistId, taskId, "Task does not exist in table");
+
+        var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
+        Assertions.assertDoesNotThrow(() -> table.deleteItem(task));
     }
 }

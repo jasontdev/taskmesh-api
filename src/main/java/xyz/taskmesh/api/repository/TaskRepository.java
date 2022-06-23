@@ -45,6 +45,17 @@ public class TaskRepository {
         }
     }
 
+    public Optional<Task> delete(Task task) {
+        var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
+        try {
+            table.deleteItem(task);
+            return Optional.of(task);
+        } catch (DynamoDbException e) {
+            System.out.println(e.getMessage());
+            return Optional.empty();
+        }
+    }
+
     public List<Task> findByTasklistId(String taskListId) {
         var table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Task.class));
 
