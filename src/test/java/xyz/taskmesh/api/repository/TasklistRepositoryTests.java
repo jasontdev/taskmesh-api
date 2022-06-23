@@ -99,4 +99,22 @@ public class TasklistRepositoryTests {
     void findByUserIdNoLists() {
         Assertions.assertEquals(0, tasklistRepository.findUserTasklistByUserId("user_" + UUID.randomUUID()).size());
     }
+
+    @Test
+    void findTasklistUsers() {
+        var userIdOne = "user_" + UUID.randomUUID();
+        var userIdTwo = "user_" + UUID.randomUUID();
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+
+        var table = dynamoDbEnhancedClient
+                .table(tablename, TableSchema.fromBean(TasklistUser.class));
+
+        table.putItem(new TasklistUser(tasklistId, userIdOne));
+        table.putItem(new TasklistUser(tasklistId, userIdTwo));
+
+        var users = tasklistRepository.findTasklistUserByTasklistId(tasklistId);
+
+        Assertions.assertEquals(2, users.stream()
+                .filter(user -> user.getUserId().equals(userIdOne) | user.getUserId().equals(userIdTwo)).count());
+    }
 }

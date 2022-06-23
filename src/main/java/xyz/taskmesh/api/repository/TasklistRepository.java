@@ -1,6 +1,5 @@
 package xyz.taskmesh.api.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
@@ -44,12 +43,20 @@ public class TasklistRepository {
     }
 
     public List<UserTasklist> findUserTasklistByUserId(String userId) {
-        // TODO: Returning a tasklist with null tasks[]. Should be a distinct type.
         var conditions =
                 QueryConditional.sortBeginsWith(Key.builder().partitionValue(userId).sortValue("tasklist_").build());
-
         var queryResult = dynamoDbEnhancedClient
                 .table(tablename, TableSchema.fromBean(UserTasklist.class))
+                .query(r -> r.queryConditional(conditions))
+                .items();
+        return queryResult.stream().toList();
+    }
+
+    public List<TasklistUser> findTasklistUserByTasklistId(String tasklistId) {
+        var conditions =
+                QueryConditional.sortBeginsWith((Key.builder().partitionValue(tasklistId).sortValue("user_").build()));
+        var queryResult = dynamoDbEnhancedClient
+                .table(tablename, TableSchema.fromBean(TasklistUser.class))
                 .query(r -> r.queryConditional(conditions))
                 .items();
         return queryResult.stream().toList();
