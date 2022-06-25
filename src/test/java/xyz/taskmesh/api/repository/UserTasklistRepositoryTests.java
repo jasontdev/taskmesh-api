@@ -39,7 +39,7 @@ public class UserTasklistRepositoryTests extends RepositoryTests<UserTasklist> {
         var userId = "user_" + UUID.randomUUID();
         var tasklistId = "tasklist_" + UUID.randomUUID();
         var name = "This list has a name";
-        var userTasklist = new UserTasklist(tasklistId, userId, name);
+        var userTasklist = new UserTasklist(userId, tasklistId, name);
 
         userTasklistRepository.save(userTasklist);
 
@@ -51,7 +51,7 @@ public class UserTasklistRepositoryTests extends RepositoryTests<UserTasklist> {
         var userId = "user_" + UUID.randomUUID();
         var tasklistId = "tasklist_" + UUID.randomUUID();
         var name = "List 1";
-        var userTasklist = new UserTasklist(tasklistId, userId, name);
+        var userTasklist = new UserTasklist(userId, tasklistId, name);
         table.putItem(userTasklist);
         table.putItem(new UserTasklist("tasklist_" + tasklistId,
                 "user_" + UUID.randomUUID(), "List 2"));
