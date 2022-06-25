@@ -13,8 +13,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @NoArgsConstructor
 @DynamoDbBean
 public class UserTasklist {
-    private String userId;
     private String tasklistId;
+    private String userId;
     private String name;
 
     @DynamoDbPartitionKey
