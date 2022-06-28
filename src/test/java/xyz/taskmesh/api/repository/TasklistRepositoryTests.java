@@ -54,7 +54,7 @@ public class TasklistRepositoryTests {
     }
 
     @Test
-    public void storeMetadata() {
+    public void saveTasklist() {
         var tasklist = new Tasklist();
         tasklist.setTasklistId("tasklist_" + UUID.randomUUID().toString());
         tasklist.setTitle("Test tasklist");
@@ -75,5 +75,37 @@ public class TasklistRepositoryTests {
                 .query(QueryConditional.sortBeginsWith(
                         Key.builder().partitionValue(tasklist.getTasklistId()).sortValue("user_").build())).items();
         Assertions.assertEquals(1, items.stream().count());
+    }
+
+    @Test
+    public void findById() {
+        var tasklistId = "tasklist_" + UUID.randomUUID();
+        var title = "findById() test tasklist";
+        var tasklist = new Tasklist();
+        tasklist.setTitle(title);
+        tasklist.setTasklistId(tasklistId);
+
+        var userIdOne = "user_" + UUID.randomUUID();
+        var userOne = new User();
+        userOne.setTasklistId(tasklistId);
+        userOne.setUserId(userIdOne);
+
+        var userIdTwo = "user_" + UUID.randomUUID();
+        var userTwo = new User();
+        userTwo.setTasklistId(tasklistId);
+        userTwo.setUserId(userIdTwo);
+
+        var users = new ArrayList<User>();
+        users.add(userOne);
+        users.add(userTwo);
+
+        tasklist.setUsers(users);
+
+        tasklistRepository.save(tasklist); // TODO: replace with direct DDB code
+        var savedTasklist = tasklistRepository.findById(tasklistId);
+
+        Assertions.assertTrue(savedTasklist.isPresent());
+        Assertions.assertEquals(2, savedTasklist.get().getUsers().stream().count());
+        Assertions.assertEquals(0, savedTasklist.get().getTasks().stream().count());
     }
 }
