@@ -1,36 +1,41 @@
 package xyz.taskmesh.api.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @DynamoDbBean
-public class TasklistUser {
+public class Metadata {
+
     private String tasklistId;
-    private String userId;
+    private final String type = "metadata";
+    private String title;
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("sk")
+    public String getMetadataId() {
+        return "metadata";
+    }
+
+    public void setMetadataId(String metadataId) {
+    }
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("pk")
     public String getTasklistId() {
         return tasklistId;
     }
+
     public void setTasklistId(String tasklistId) {
         this.tasklistId = tasklistId;
     }
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("sk")
-    public String getUserId() {
-        return userId;
+    public String getTitle() {
+        return title;
     }
-    public void setUserId(String userId) {
-        this.userId = userId;
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
