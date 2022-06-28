@@ -55,7 +55,9 @@ public class TasklistRepositoryTests {
 
     @Test
     public void storeMetadata() {
-        var tasklist = new Tasklist("New tasklist");
+        var tasklist = new Tasklist();
+        tasklist.setTasklistId("tasklist_" + UUID.randomUUID().toString());
+        tasklist.setTitle("Test tasklist");
         var user = new User("user_" + UUID.randomUUID().toString(), tasklist.getTasklistId());
         var users = new ArrayList<User>();
         users.add(user);

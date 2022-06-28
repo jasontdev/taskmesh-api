@@ -1,43 +1,19 @@
 package xyz.taskmesh.api.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
 public class Tasklist {
     private String tasklistId;
-    private List<User> users;
-    private List<Task> tasks;
+    private List<User> users = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
     private String title;
-
-    public Tasklist(List<User> users, List<Task> tasks, String title) {
-        tasklistId = "tasklist_".concat(UUID.randomUUID().toString());
-        this.users = users;
-        this.tasks = tasks;
-        this.title = title;
-    }
-
-    public Tasklist(List<User> users, List<Task> tasks) {
-        tasklistId = "tasklist_".concat(UUID.randomUUID().toString());
-        this.users = users;
-        this.tasks = tasks;
-    }
-
-    public Tasklist(List<User> users) {
-        tasklistId = "tasklist_".concat(UUID.randomUUID().toString());
-        this.users = users;
-        this.tasks = new ArrayList<>();
-    }
-
-    public Tasklist(String title) {
-        tasklistId = "tasklist_".concat(UUID.randomUUID().toString());
-        this.users = new ArrayList<>();
-        this.tasks = new ArrayList<>();
-        this.title = title;
-    }
-
-    public Tasklist() {
-    }
 
     public List<User> getUsers() {
         return users;
