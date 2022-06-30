@@ -1,5 +1,7 @@
 package xyz.taskmesh.api.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,11 +11,27 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@Builder
 public class Tasklist {
     private String tasklistId;
     private List<User> users = new ArrayList<>();
     private List<Task> tasks = new ArrayList<>();
     private String title;
+
+    public Tasklist(String tasklistId, List<User> users, List<Task> tasks, String title) {
+        this.tasklistId = tasklistId;
+        if (users != null) {
+            this.users = users;
+        } else {
+            this.users = new ArrayList<>();
+        }
+        if (tasks != null) {
+            this.tasks = tasks;
+        } else {
+            this.tasks = new ArrayList<>();
+        }
+        this.title = title;
+    }
 
     public List<User> getUsers() {
         return users;
