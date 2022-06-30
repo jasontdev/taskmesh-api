@@ -1,24 +1,22 @@
 package xyz.taskmesh.api.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @Builder
 public class Tasklist {
     private String tasklistId;
-    private List<User> users = new ArrayList<>();
+    private List<TasklistUser> users = new ArrayList<>();
     private List<Task> tasks = new ArrayList<>();
     private String title;
 
-    public Tasklist(String tasklistId, List<User> users, List<Task> tasks, String title) {
+    public Tasklist(String tasklistId, List<TasklistUser> users, List<Task> tasks, String title) {
         this.tasklistId = tasklistId;
         if (users != null) {
             this.users = users;
@@ -33,11 +31,11 @@ public class Tasklist {
         this.title = title;
     }
 
-    public List<User> getUsers() {
+    public List<TasklistUser> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(List<TasklistUser> users) {
         this.users = users;
     }
 

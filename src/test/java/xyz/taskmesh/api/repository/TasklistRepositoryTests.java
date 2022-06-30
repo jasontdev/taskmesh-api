@@ -16,7 +16,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import xyz.taskmesh.api.model.Metadata;
 import xyz.taskmesh.api.model.Tasklist;
-import xyz.taskmesh.api.model.User;
+import xyz.taskmesh.api.model.TasklistUser;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -58,8 +58,8 @@ public class TasklistRepositoryTests {
         var tasklist = new Tasklist();
         tasklist.setTasklistId("tasklist_" + UUID.randomUUID().toString());
         tasklist.setTitle("Test tasklist");
-        var user = new User("user_" + UUID.randomUUID().toString(), tasklist.getTasklistId());
-        var users = new ArrayList<User>();
+        var user = new TasklistUser("user_" + UUID.randomUUID().toString(), tasklist.getTasklistId());
+        var users = new ArrayList<TasklistUser>();
         users.add(user);
         tasklist.setUsers(users);
         tasklistRepository.save(tasklist);
@@ -70,7 +70,7 @@ public class TasklistRepositoryTests {
                 .getItem(Key.builder().partitionValue(tasklist.getTasklistId()).sortValue("metadata").build());
         Assertions.assertEquals(tasklist.getTitle(), item.getTitle());
 
-        var userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(User.class));
+        var userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class));
         var items = userTable
                 .query(QueryConditional.sortBeginsWith(
                         Key.builder().partitionValue(tasklist.getTasklistId()).sortValue("user_").build())).items();
@@ -86,16 +86,16 @@ public class TasklistRepositoryTests {
         tasklist.setTasklistId(tasklistId);
 
         var userIdOne = "user_" + UUID.randomUUID();
-        var userOne = new User();
+        var userOne = new TasklistUser();
         userOne.setTasklistId(tasklistId);
         userOne.setUserId(userIdOne);
 
         var userIdTwo = "user_" + UUID.randomUUID();
-        var userTwo = new User();
+        var userTwo = new TasklistUser();
         userTwo.setTasklistId(tasklistId);
         userTwo.setUserId(userIdTwo);
 
-        var users = new ArrayList<User>();
+        var users = new ArrayList<TasklistUser>();
         users.add(userOne);
         users.add(userTwo);
 

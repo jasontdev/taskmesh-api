@@ -6,12 +6,14 @@ import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.internal.operations.BatchGetItemOperation;
-import software.amazon.awssdk.enhanced.dynamodb.model.*;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import xyz.taskmesh.api.model.Metadata;
 import xyz.taskmesh.api.model.Task;
 import xyz.taskmesh.api.model.Tasklist;
-import xyz.taskmesh.api.model.User;
+import xyz.taskmesh.api.model.TasklistUser;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -35,7 +37,7 @@ public class TasklistRepository {
         metadata.setTitle(tasklist.getTitle());
         var metadataTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(Metadata.class));
         var userTable =
-                dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(User.class));
+                dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class));
         var writeBatches = new ArrayList<WriteBatch>();
 
         writeBatches.add(WriteBatch.builder(Metadata.class)
@@ -44,7 +46,7 @@ public class TasklistRepository {
 
         if (tasklist.getUsers().size() > 0) {
             tasklist.getUsers().forEach(user -> writeBatches.add(
-                    WriteBatch.builder(User.class).mappedTableResource(userTable).addPutItem(user).build()));
+                    WriteBatch.builder(TasklistUser.class).mappedTableResource(userTable).addPutItem(user).build()));
         }
 
         if (tasklist.getTasks().size() > 0) {
@@ -68,7 +70,7 @@ public class TasklistRepository {
         tasklist.setTasklistId(metadata.getTasklistId());
         tasklist.setTitle(metadata.getTitle());
 
-        var userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(User.class));
+        var userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class));
         var users = userTable
                 .query(QueryConditional.sortBeginsWith(Key.builder().partitionValue(tasklistId).sortValue("user_").build()))
                 .items().stream().toList();

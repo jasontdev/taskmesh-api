@@ -10,12 +10,12 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @DynamoDbBean
 @Data
 @NoArgsConstructor
-public class User {
+public class TasklistUser {
     private String userId;
     private String tasklistId;
     private String name;
 
-    public User(String userId, String tasklistId) {
+    public TasklistUser(String userId, String tasklistId) {
         this.tasklistId = tasklistId;
         this.userId = userId;
     }

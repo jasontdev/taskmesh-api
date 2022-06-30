@@ -5,45 +5,53 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class DynamoDbRepository<T> {
 
-    private DynamoDbTable<T> dynamoDbTable;
+    protected final DynamoDbTable<T> table;
 
-    public DynamoDbRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient,
-                              String tablename,
-                              Class<T> tClass) {
-        this.dynamoDbTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(tClass));
+    public DynamoDbRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient, String tablename, Class<T> tClass) {
+        this.table = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(tClass));
     }
 
-    public void save(T item) {
-        dynamoDbTable.putItem(item);
+    public Optional<T> save(T item) {
+        try {
+            table.putItem(item);
+            return Optional.of(item);
+        } catch (DynamoDbException e) {
+            return Optional.empty();
+        }
     }
 
-    public void update(T item) {
-        dynamoDbTable.updateItem(item);
+    public Optional<T> update(T item) {
+        try {
+            table.updateItem(item);
+            return Optional.of(item);
+        } catch (DynamoDbException e) {
+            return Optional.empty();
+        }
     }
 
-    public void delete(T item) {
-        dynamoDbTable.deleteItem(item);
-    }
-
-    public Optional<T> get(T item) {
-        var savedItem = dynamoDbTable.getItem(item);
-        return Optional.ofNullable(savedItem);
-    }
-
-    public Optional<T> findByKey(Key key) {
-        var savedItem = dynamoDbTable.getItem(key);
-        return Optional.ofNullable(savedItem);
+    public Optional<T> delete(T item) {
+        try {
+            table.deleteItem(item);
+            return Optional.of(item);
+        } catch (DynamoDbException e) {
+            return Optional.empty();
+        }
     }
 
     public List<T> findAllByKey(Key key) {
-        return dynamoDbTable.query(
-                QueryConditional.sortBeginsWith(key)
-        ).items().stream().toList();
+        try {
+            var query = table.query(QueryConditional.sortBeginsWith(key));
+            return query.items().stream().toList();
+        } catch (DynamoDbException e) {
+            return new ArrayList<T>();
+        }
     }
 }

@@ -14,34 +14,34 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import xyz.taskmesh.api.model.Tasklist;
-import xyz.taskmesh.api.model.User;
+import xyz.taskmesh.api.model.TasklistUser;
 
 import java.util.UUID;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class UserRepositoryTests {
+public class TasklistUserRepositoryTests {
 
-    private DynamoDbTable<User> userTable;
-    private UserRepository userRepository;
+    private DynamoDbTable<TasklistUser> userTable;
+    private TasklistUserRepository tasklistUserRepository;
     private TasklistRepository tasklistRepository;
     private String tasklistid = "tasklist_" + UUID.randomUUID();
 
-    public UserRepositoryTests(@Autowired UserRepository userRepository,
-                               @Autowired TasklistRepository tasklistRepository,
-                               @Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
-                               @Value("${database.tablename}") String tablename) {
-        this.userRepository = userRepository;
+    public TasklistUserRepositoryTests(@Autowired TasklistUserRepository tasklistUserRepository,
+                                       @Autowired TasklistRepository tasklistRepository,
+                                       @Autowired DynamoDbEnhancedClient dynamoDbEnhancedClient,
+                                       @Value("${database.tablename}") String tablename) {
+        this.tasklistUserRepository = tasklistUserRepository;
         this.tasklistRepository = tasklistRepository;
-        this.userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(User.class));
+        this.userTable = dynamoDbEnhancedClient.table(tablename, TableSchema.fromBean(TasklistUser.class));
     }
 
     @BeforeEach
     public void beforeEach() {
-       userTable.createTable();
-       var testTasklist = Tasklist.builder().tasklistId(tasklistid).build();
-       tasklistRepository.save(testTasklist);
+        userTable.createTable();
+        var testTasklist = Tasklist.builder().tasklistId(tasklistid).build();
+        tasklistRepository.save(testTasklist);
     }
 
     @AfterEach
@@ -51,7 +51,7 @@ public class UserRepositoryTests {
 
     @Test
     public void isInjectible() {
-        Assertions.assertNotNull(userRepository);
+        Assertions.assertNotNull(tasklistUserRepository);
     }
 
     @Test
