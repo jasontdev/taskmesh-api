@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 @Data
@@ -28,7 +29,7 @@ public class UserTasklist {
         this.userId = userId;
     }
 
-    @DynamoDbPartitionKey
+    @DynamoDbSortKey
     @DynamoDbAttribute("sk")
     public String getTasklistId() {
         return tasklistId;
