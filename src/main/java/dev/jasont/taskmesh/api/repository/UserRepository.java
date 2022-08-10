@@ -1,4 +1,7 @@
 package dev.jasont.taskmesh.api.repository;
 
-public class UserRepository {
+import dev.jasont.taskmesh.api.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, String> {
 }

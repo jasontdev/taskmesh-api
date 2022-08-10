@@ -1,4 +1,7 @@
 package dev.jasont.taskmesh.api.repository;
 
-public interface TaskRepository {
+import dev.jasont.taskmesh.api.entity.Task;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TaskRepository extends JpaRepository<Task, Long> {
 }

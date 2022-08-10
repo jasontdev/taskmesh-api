@@ -19,15 +19,14 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable("id") String userId) {
         // TODO: check access token
         var user = userRepository.findById(userId);
-
-        if(user.isPresent())
+        if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
+        }
 
         var newUser = new User();
         newUser.setId(userId);
         userRepository.save(newUser);
 
-        var savedUser = userRepository.findById(userId);
-        return savedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.of(userRepository.findById(userId));
     }
 }
