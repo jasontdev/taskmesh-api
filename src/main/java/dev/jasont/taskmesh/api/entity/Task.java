@@ -37,6 +37,9 @@ public class Task {
 
     public void setTasklist(Tasklist tasklist) {
         this.tasklist = tasklist;
+        var tasklistTasks = tasklist.getTasks();
+        tasklistTasks.add(this);
+        tasklist.setTasks(tasklistTasks);
     }
 
     public Long getId() {
