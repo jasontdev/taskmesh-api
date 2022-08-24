@@ -8,9 +8,11 @@ import dev.jasont.taskmesh.api.repository.TasklistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 public class TaskController {
@@ -30,7 +32,6 @@ public class TaskController {
         newTask.setName(taskInput.getName());
 
         var tasklist = tasklistRepository.findById(taskInput.getTasklistId());
-
         if(tasklist.isEmpty()) 
             return ResponseEntity.badRequest().build();
             
@@ -41,5 +42,11 @@ public class TaskController {
             return ResponseEntity.badRequest().build();
 
         return ResponseEntity.ok(savedTask);
+    }
+
+    @DeleteMapping("/task/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
+        taskRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
