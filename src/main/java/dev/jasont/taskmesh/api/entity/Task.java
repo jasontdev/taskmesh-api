@@ -1,10 +1,7 @@
 package dev.jasont.taskmesh.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class Task {
@@ -37,9 +34,6 @@ public class Task {
 
     public void setTasklist(Tasklist tasklist) {
         this.tasklist = tasklist;
-        var tasklistTasks = tasklist.getTasks();
-        tasklistTasks.add(this);
-        tasklist.setTasks(tasklistTasks);
     }
 
     public Long getId() {

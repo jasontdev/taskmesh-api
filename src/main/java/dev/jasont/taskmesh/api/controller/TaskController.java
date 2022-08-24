@@ -35,7 +35,7 @@ public class TaskController {
         if(tasklist.isEmpty()) 
             return ResponseEntity.badRequest().build();
             
-        newTask.setTasklist(tasklist.get());
+        tasklist.get().addTask(newTask);
         var savedTask = taskRepository.save(newTask);
 
         if(savedTask == null)
