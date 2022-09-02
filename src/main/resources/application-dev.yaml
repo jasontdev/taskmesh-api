@@ -6,9 +6,9 @@ spring:
           issuer-uri: https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0
           jwk-set-uri: https://login.microsoftonline.com/consumers/discovery/v2.0/keys
   datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://localhost:3306/taskmesh
+    username: taskmesh
+    password: abcd1234
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
