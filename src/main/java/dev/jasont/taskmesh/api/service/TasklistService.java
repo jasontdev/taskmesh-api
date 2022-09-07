@@ -1,5 +1,7 @@
 package dev.jasont.taskmesh.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +60,19 @@ public class TasklistService {
         }
 
         return Optional.ofNullable(tasklistRepository.save(newTasklist));
+    }
+
+    public Optional<Tasklist> getById(OAuth2AuthenticatedPrincipal token, Long id) {
+        var tasklist = tasklistRepository.findById(id);
+        String authenticatedUserId = token.getAttribute("sub");
+        
+        if(tasklist.isPresent() && tasklist.get().hasUser(authenticatedUserId)) {
+            return tasklist;     
+        }
+        return Optional.empty();
+    }
+
+    public List<Tasklist> getAllByUser(String id) {
+        return tasklistRepository.findAllByUsersId(id); // all tasklists involving user
     }
 }
