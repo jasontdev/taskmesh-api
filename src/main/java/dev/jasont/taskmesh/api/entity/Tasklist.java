@@ -73,4 +73,8 @@ public class Tasklist {
         tasks.add(task);
         task.setTasklist(this);
     }
+
+    public boolean hasUser(String userId) {
+        return users.stream().anyMatch(user -> user.getId() == userId);
+    }
 }
