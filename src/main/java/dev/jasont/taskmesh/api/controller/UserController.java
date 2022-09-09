@@ -1,32 +1,33 @@
 package dev.jasont.taskmesh.api.controller;
 
-import dev.jasont.taskmesh.api.entity.User;
-import dev.jasont.taskmesh.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import dev.jasont.taskmesh.api.entity.User;
+import dev.jasont.taskmesh.api.service.UserService;
+import dev.jasont.taskmesh.api.util.UnauthorizedException;
 
 @RestController
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(@Autowired UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(@Autowired UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") String userId) {
-        // TODO: check access token
-        var user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+    @PostMapping("/user")
+    public ResponseEntity<User> createUser(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal token, User user) {
+        // TODO: validate user before attempting to save
+        try {
+            var newUser = userService.createUser(token, user);
+            return ResponseEntity.of(newUser);
+        } catch (UnauthorizedException exception) {
+            return ResponseEntity.status(403).build();
         }
-
-        var newUser = new User();
-        newUser.setId(userId);
-        userRepository.save(newUser);
-
-        return ResponseEntity.of(userRepository.findById(userId));
     }
 }
