@@ -3,12 +3,11 @@ package dev.jasont.taskmesh.api.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.UserRepository;
-import dev.jasont.taskmesh.api.util.UnauthorizedException;
+import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @Service
 public class UserService {
@@ -19,14 +18,16 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> createUser(OAuth2AuthenticatedPrincipal token, User user) throws UnauthorizedException {
-        if(token.getAttribute("sub") != user.getId())
-           throw new UnauthorizedException("user.id does not match token subject");
-
+    public Optional<User> createUser(String requestingUserId, User user) throws UnauthourizedException {
+        if(requestingUserId != user.getId())
+            throw new UnauthourizedException();
         return Optional.ofNullable(userRepository.save(user));
     }
 
-    public Optional<User> getUser(String id) {
+    public Optional<User> getUser(String requestingUserId, String id) throws UnauthourizedException {
+        if(requestingUserId != id)
+            throw new UnauthourizedException();
+
         return userRepository.findById(id);
     }
 }
