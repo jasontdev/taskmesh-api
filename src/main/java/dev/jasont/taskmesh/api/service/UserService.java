@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.UserRepository;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -18,14 +19,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> createUser(String requestingUserId, User user) throws UnauthourizedException {
-        if(requestingUserId != user.getId())
+    public Optional<User> createUser(AuthenticatedUser authUser, User user) throws UnauthourizedException {
+        if(authUser.getId() != user.getId())
             throw new UnauthourizedException();
         return Optional.ofNullable(userRepository.save(user));
     }
 
-    public Optional<User> getUser(String requestingUserId, String id) throws UnauthourizedException {
-        if(requestingUserId != id)
+    public Optional<User> getUser(AuthenticatedUser authUser, String id) throws UnauthourizedException {
+        if(authUser.getId() != id)
             throw new UnauthourizedException();
 
         return userRepository.findById(id);

@@ -3,6 +3,7 @@ package dev.jasont.taskmesh.api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 

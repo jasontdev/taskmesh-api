@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.service.UserService;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -26,8 +27,8 @@ public class UserController {
     public ResponseEntity<User> createUser(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal token, User user) {
         // TODO: validate user before attempting to save
         try {
-            String requestingUserId = token.getAttribute("sub");
-            return ResponseEntity.of(userService.createUser(requestingUserId, user));
+            var requestingUser = new AuthenticatedUser(token.getAttribute("sub"));
+            return ResponseEntity.of(userService.createUser(requestingUser, user));
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
@@ -40,8 +41,8 @@ public class UserController {
     public ResponseEntity<User> getUser(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal token,
             @PathVariable("id") String id) {
         try {
-            String requestingUserId = token.getAttribute("sub");
-            return ResponseEntity.of(userService.getUser(requestingUserId, id));
+            var requestingUser = new AuthenticatedUser(token.getAttribute("sub"));
+            return ResponseEntity.of(userService.getUser(requestingUser, id));
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();

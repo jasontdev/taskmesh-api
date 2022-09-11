@@ -3,6 +3,7 @@ package dev.jasont.taskmesh.api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +21,7 @@ public class Tasklist {
     private Long id;
     private String name;
 
-    @OneToMany
+    @OneToMany(cascade = { CascadeType.ALL })
     @JsonIgnoreProperties("tasklist")
     private List<Task> tasks = new ArrayList<>();
 
