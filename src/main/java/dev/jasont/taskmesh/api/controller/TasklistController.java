@@ -23,6 +23,7 @@ public class TasklistController {
 
     @PostMapping("/tasklist")
     public ResponseEntity<Tasklist> createTasklist(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal accessToken, @RequestBody Tasklist tasklist) {
+        var AuthenticatedUser = new AuthenticatedUser(accessToken.getAttribute("sub"));
         return ResponseEntity.of(tasklistService.createTasklist(accessToken, tasklist));
     }
 
