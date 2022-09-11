@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.service.TasklistService;
 
@@ -23,12 +24,13 @@ public class TasklistController {
 
     @PostMapping("/tasklist")
     public ResponseEntity<Tasklist> createTasklist(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal accessToken, @RequestBody Tasklist tasklist) {
-        var AuthenticatedUser = new AuthenticatedUser(accessToken.getAttribute("sub"));
-        return ResponseEntity.of(tasklistService.createTasklist(accessToken, tasklist));
+        var authenticatedUser = new AuthenticatedUser(accessToken.getAttribute("sub"));
+        return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklist));
     }
 
     @GetMapping("/tasklist/{id}")
     public ResponseEntity<Tasklist> getTasklist(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal accessToken, @PathVariable("id") Long tasklistId) {
-        return ResponseEntity.of(tasklistService.getById(accessToken, tasklistId));
+        var authenticatedUser = new AuthenticatedUser(accessToken.getAttribute("sub"));
+        return ResponseEntity.of(tasklistService.getById(authenticatedUser, tasklistId));
     }
 }

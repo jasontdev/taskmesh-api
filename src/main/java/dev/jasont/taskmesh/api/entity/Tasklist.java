@@ -21,7 +21,7 @@ public class Tasklist {
     private Long id;
     private String name;
 
-    @OneToMany(cascade = { CascadeType.ALL })
+    @OneToMany(cascade = { CascadeType.REMOVE })
     @JsonIgnoreProperties("tasklist")
     private List<Task> tasks = new ArrayList<>();
 

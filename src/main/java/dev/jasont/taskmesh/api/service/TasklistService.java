@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.azure.core.implementation.Option;
+
 import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Task;
 import dev.jasont.taskmesh.api.entity.Tasklist;
@@ -40,6 +42,7 @@ public class TasklistService {
             return Optional.empty(); // Tasklist must always have at least 1 user
 
         // check if authenticatedUser matches any users in Tasklist
+        // TODO: this match fails when it should succeed
         if(users.stream().anyMatch(user -> user.getId() == authenticatedUser.getId())) {
             newTasklist.setUsers(users); // replace users from DB
         } else {
@@ -53,7 +56,11 @@ public class TasklistService {
             newTasklist.setTasks(tasks);
         }
 
-        return Optional.ofNullable(tasklistRepository.save(newTasklist));
+        var updatedUsers = userRepository.saveAll(users);
+        if(updatedUsers == null)
+            return Optional.empty();
+
+        return Optional.ofNullable(tasklistRepository.save(tasklist));
     }
 
     public Optional<Tasklist> getById(AuthenticatedUser authenticatedUser, Long id) {
