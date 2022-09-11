@@ -38,7 +38,7 @@ public class TasklistServiceTests {
 
     @Test
     public void isInjectible() {
-        Assertions.assertNotNull(tasklistService);
+        Assertions.assertNotNull(tasklistService, "Failed to inject tasklistService");
     }
 
     @Test
@@ -47,11 +47,11 @@ public class TasklistServiceTests {
         var tasklist = new Tasklist();
 
         var user = userRepository.findById("user");
-        Assertions.assertTrue(user.isPresent());
+        Assertions.assertTrue(user.isPresent(), "Test user not found");
 
-        tasklist.setName("Test tasklist");
+        tasklist.setName("Test tasklist"); 
         tasklist.addUser(user.get());
         var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklist);
-        Assertions.assertTrue(savedTasklist.isPresent());
+        Assertions.assertTrue(savedTasklist.isPresent(), "Failed to retreive tasklist");
     }
 }
