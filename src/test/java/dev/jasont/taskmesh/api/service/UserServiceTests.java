@@ -1,6 +1,5 @@
 package dev.jasont.taskmesh.api.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Task;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.entity.User;
-import dev.jasont.taskmesh.api.repository.TaskRepository;
 import dev.jasont.taskmesh.api.repository.TasklistRepository;
 import dev.jasont.taskmesh.api.repository.UserRepository;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -27,14 +25,12 @@ public class UserServiceTests {
     private UserService userService;
     private UserRepository userRepository;
     private TasklistRepository tasklistRepository;
-    private TaskRepository taskRepository;
 
     public UserServiceTests(@Autowired UserService userService, @Autowired UserRepository userRepository,
-            @Autowired TasklistRepository tasklistRepository, @Autowired TaskRepository taskRepository) {
+            @Autowired TasklistRepository tasklistRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.tasklistRepository = tasklistRepository;
-        this.taskRepository = taskRepository;
     }
 
     @BeforeEach
