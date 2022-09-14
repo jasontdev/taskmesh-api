@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.UserRepository;
+import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

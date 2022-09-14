@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class Tasklist {
     private Long id;
     private String name;
 
-    @OneToMany(cascade = { CascadeType.ALL })
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("tasklist")
     private List<Task> tasks = new ArrayList<>();
 
@@ -30,6 +31,10 @@ public class Tasklist {
     private List<User> users = new ArrayList<>();
 
     public Tasklist() {
+    }
+
+    public Tasklist(String name) {
+        this.name = name;
     }
 
     public Long getId() {

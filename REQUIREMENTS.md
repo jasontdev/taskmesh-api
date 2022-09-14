@@ -1,13 +1,13 @@
 # TASKMESH.XYZ: REQUIREMENTS
 
 ## 1. Introduction
-Taskmesh is a task management tool for teams. It expands upon the familiar concept of the task or todo list 
-by allowing multiple users to interact with each task list. Taskmesh benefits teams by facilitating the 
+taskmesh is a task management tool for teams. It expands upon the familiar concept of the task or todo list 
+by allowing multiple users to interact with each task list. taskmesh benefits teams by facilitating the 
 coordinated and efficient completion of projects.
 
-Organisations will find value in Taskmesh by using it as a tool to streamline communication between team
-members working together on projects. Taskmesh moves project coordination from multiple existing communication
-channels to a single, streamlined channel purpose-built for coordination. Teams can also find Taskmesh a valuable
+Organisations will find value in taskmesh by using it as a tool to streamline communication between team
+members working together on projects. taskmesh moves project coordination from multiple existing communication
+channels to a single, streamlined channel purpose-built for coordination. Teams can also find taskmesh a valuable
 tool for reviewing projects once completed as it provides a record of task completion.
 
 ## 2. General description
@@ -62,3 +62,7 @@ that there is already a pending contact list request for that user.
 - User edits the name of a task they creat.
 - User deletes a task that they created.
 - User changes the completion status of a task they may or may not have created.
+
+## 4. Deployment
+- Deployment infrastructure should be built at an early stage to ensure working, work in progress versions 
+can be delivered as features are added.

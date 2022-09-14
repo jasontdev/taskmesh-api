@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.service.UserService;
+import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @RestController

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.service.TasklistService;
+import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 
 @RestController
 public class TasklistController {

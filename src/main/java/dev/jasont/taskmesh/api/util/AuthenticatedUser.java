@@ -1,4 +1,4 @@
-package dev.jasont.taskmesh.api.entity;
+package dev.jasont.taskmesh.api.util;
 
 public class AuthenticatedUser {
 

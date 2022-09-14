@@ -6,13 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.jasont.taskmesh.api.entity.AuthenticatedUser;
 import dev.jasont.taskmesh.api.entity.Task;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.TaskRepository;
 import dev.jasont.taskmesh.api.repository.TasklistRepository;
 import dev.jasont.taskmesh.api.repository.UserRepository;
+import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 
 @Service
 public class TasklistService {
