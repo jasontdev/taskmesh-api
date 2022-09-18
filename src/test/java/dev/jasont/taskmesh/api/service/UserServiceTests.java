@@ -97,13 +97,11 @@ public class UserServiceTests {
 
     @Test
     public void getUserNotAuthorized() {
-        var user = new User();
-        var userId = "user_id";
+        var user = new User("user_id");
         var authUser = new AuthenticatedUser( "wrong_user_id" );
-        user.setId(userId);
         userRepository.save(user);
 
         Assertions.assertThrows(UnauthourizedException.class,
-                () -> userService.getUser(authUser, userId));
+                () -> userService.getUser(authUser, "user_id"));
     }
 }
