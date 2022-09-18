@@ -28,6 +28,10 @@ public class Task {
     public Task() {
     }
 
+    public Task(String name) {
+        this.name = name;
+    }
+
     public Tasklist getTasklist() {
         return tasklist;
     }

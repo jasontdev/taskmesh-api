@@ -3,6 +3,7 @@ package dev.jasont.taskmesh.api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class User {
     private List<Tasklist> tasklists = new ArrayList<>();
 
     public User() {
+    }
+
+    public User(String id) {
+        this.id = id;
     }
 
     public String getId() {
