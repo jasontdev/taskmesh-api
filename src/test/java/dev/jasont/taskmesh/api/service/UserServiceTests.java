@@ -56,6 +56,14 @@ public class UserServiceTests {
     }
 
     @Test
+    public void createUserNotAuthorised() {
+        var user = new User("user_id");
+        var authUser = new AuthenticatedUser("wrong_user_id");
+
+        Assertions.assertThrows(UnauthourizedException.class, () -> userService.createUser(authUser, user));
+    }
+
+    @Test
     public void getUserThatExists() throws UnauthourizedException {
         var userId = "user_id";
         var user = new User(userId);
