@@ -44,12 +44,11 @@ public class TasklistServiceTests {
     @Test
     public void createEmptyTasklist() {
         var authenticatedUser = new AuthenticatedUser("user");
-        var tasklist = new Tasklist();
+        var tasklist = new Tasklist("Test tasklist");
 
         var user = userRepository.findById("user");
         Assertions.assertTrue(user.isPresent(), "Test user not found");
 
-        tasklist.setName("Test tasklist"); 
         tasklist.addUser(user.get());
         var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklist);
         Assertions.assertTrue(savedTasklist.isPresent(), "Failed to retreive tasklist");
