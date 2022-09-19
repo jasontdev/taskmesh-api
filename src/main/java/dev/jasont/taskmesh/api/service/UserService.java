@@ -20,13 +20,13 @@ public class UserService {
     }
 
     public Optional<User> createUser(AuthenticatedUser authUser, User user) throws UnauthourizedException {
-        if(authUser.getId() != user.getId())
+        if(authUser.getId().equals(user.getId()))
             throw new UnauthourizedException();
         return Optional.ofNullable(userRepository.save(user));
     }
 
     public Optional<User> getUser(AuthenticatedUser authUser, String id) throws UnauthourizedException {
-        if(authUser.getId() != id)
+        if(authUser.getId().equals(id))
             throw new UnauthourizedException();
 
         return userRepository.findById(id);
