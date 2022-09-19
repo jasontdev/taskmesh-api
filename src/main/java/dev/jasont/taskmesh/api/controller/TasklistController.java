@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.service.TasklistService;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
+import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @RestController
 public class TasklistController {
@@ -24,13 +25,21 @@ public class TasklistController {
 
     @PostMapping("/tasklist")
     public ResponseEntity<Tasklist> createTasklist(Principal accessToken, @RequestBody Tasklist tasklist) {
-        var authenticatedUser = new AuthenticatedUser(accessToken.getName());
-        return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklist));
+        try {
+            var authenticatedUser = new AuthenticatedUser(accessToken.getName());
+            return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklist));
+        } catch (UnauthourizedException exception) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/tasklist/{id}")
-    public ResponseEntity<Tasklist> getTasklist(Principal  accessToken, @PathVariable("id") Long tasklistId) {
-        var authenticatedUser = new AuthenticatedUser(accessToken.getName());
-        return ResponseEntity.of(tasklistService.getById(authenticatedUser, tasklistId));
+    public ResponseEntity<Tasklist> getTasklist(Principal accessToken, @PathVariable("id") Long tasklistId) {
+        try {
+            var authenticatedUser = new AuthenticatedUser(accessToken.getName());
+            return ResponseEntity.of(tasklistService.getById(authenticatedUser, tasklistId));
+        } catch (UnauthourizedException exception) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
