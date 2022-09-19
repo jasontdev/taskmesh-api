@@ -47,6 +47,7 @@ public class UserController {
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
         } catch (Exception exception) {
+            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
