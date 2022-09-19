@@ -19,7 +19,7 @@ import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class UserServiceTests {
 
     private UserService userService;

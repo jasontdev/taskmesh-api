@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "taskmesh_user") // user is often reserved name in databases
 public class User {
 
     @Id

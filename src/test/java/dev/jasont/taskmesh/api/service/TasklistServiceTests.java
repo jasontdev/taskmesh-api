@@ -16,7 +16,7 @@ import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class TasklistServiceTests {
 
     private TasklistService tasklistService;
