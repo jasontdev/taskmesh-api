@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jasont.taskmesh.api.entity.User;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<User> createUser(Principal token, User user) {
+    public ResponseEntity<User> createUser(Principal token, @RequestBody User user) {
         // TODO: validate user before attempting to save
         try {
             var requestingUser = new AuthenticatedUser(token.getName());
@@ -33,6 +34,7 @@ public class UserController {
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
         } catch (Exception exception) {
+            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
