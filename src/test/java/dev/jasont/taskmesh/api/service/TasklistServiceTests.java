@@ -13,6 +13,7 @@ import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.UserRepository;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
+import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -42,7 +43,7 @@ public class TasklistServiceTests {
     }
 
     @Test
-    public void createEmptyTasklist() {
+    public void createEmptyTasklist() throws UnauthourizedException {
         var authenticatedUser = new AuthenticatedUser("user");
         var tasklist = new Tasklist("Test tasklist");
 
