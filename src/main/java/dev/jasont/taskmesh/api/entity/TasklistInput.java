@@ -35,4 +35,8 @@ public class TasklistInput {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
+
+    public boolean hasTasks() {
+        return getTasks() != null && getTasks().size() > 0;
+    }
 }

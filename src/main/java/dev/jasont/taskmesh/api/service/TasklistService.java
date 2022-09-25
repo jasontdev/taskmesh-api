@@ -42,7 +42,7 @@ public class TasklistService {
 
         // prepare new Tasklist
         var tasklist = new Tasklist(tasklistInput.getName());
-        if (tasklistInput.getTasks() != null && tasklistInput.getTasks().size() > 0) {
+        if (tasklistInput.hasTasks()) {
             // create list of tasks attache to tasklist
             var tasks = tasklistInput.getTasks().stream().map(task -> {
                 task.setTasklist(tasklist);
