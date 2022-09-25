@@ -5,11 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import dev.jasont.taskmesh.api.entity.Task;
 import dev.jasont.taskmesh.api.entity.Tasklist;
-import dev.jasont.taskmesh.api.entity.User;
-import dev.jasont.taskmesh.api.repository.TaskRepository;
+import dev.jasont.taskmesh.api.entity.TasklistInput;
 import dev.jasont.taskmesh.api.repository.TasklistRepository;
 import dev.jasont.taskmesh.api.repository.UserRepository;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
@@ -20,59 +19,48 @@ public class TasklistService {
 
     private TasklistRepository tasklistRepository;
     private UserRepository userRepository;
-    private TaskRepository taskRepository;
 
     public TasklistService(@Autowired TasklistRepository tasklistRepository,
-            @Autowired UserRepository userRepository,
-            @Autowired TaskRepository taskRepository) {
+            @Autowired UserRepository userRepository) {
         this.tasklistRepository = tasklistRepository;
         this.userRepository = userRepository;
-        this.taskRepository = taskRepository;
     }
 
-    public Optional<Tasklist> createTasklist(AuthenticatedUser authenticatedUser, Tasklist tasklist) throws UnauthourizedException {
-        // TODO: refactor
-        if(tasklist.getUsers().stream().noneMatch(user -> user.getId().equals(authenticatedUser.getId()))) {
+    @Transactional
+    public Optional<Tasklist> createTasklist(AuthenticatedUser authenticatedUser,
+            TasklistInput tasklistInput) throws UnauthourizedException {
+
+        // TODO: make sure all users are contacts of authenticatedUser
+        if (!tasklistInput.getUserIds().stream().anyMatch(userId -> authenticatedUser.getId().equals(userId)))
             throw new UnauthourizedException();
-        }
 
-        var newTasklist = new Tasklist();
-        newTasklist.setName(tasklist.getName());
-
-        var tasklistUserIds = tasklist.getUsers().stream().map(User::getId).toList();
-        var users = userRepository.findAllById(tasklistUserIds);
-
-        if (users.size() < 1)
-            return Optional.empty(); // Tasklist must always have at least 1 user
-
-        // check if authenticatedUser matches any users in Tasklist
-        if (users.stream().anyMatch(user -> user.getId().endsWith(authenticatedUser.getId()))) {
-            newTasklist.setUsers(users); // replace users from DB
-        } else {
+        var users = userRepository.findAllById(tasklistInput.getUserIds());
+        if (users.size() < 0) {
+            // TODO: throw an exception so controller knows why we are returning empty
             return Optional.empty();
         }
 
-        // note: tasks are optional
+        // prepare new Tasklist
+        var tasklist = new Tasklist(tasklistInput.getName());
         if (tasklist.getTasks().size() > 0) {
-            var taskIds = tasklist.getTasks().stream().map(Task::getId).toList();
-            var tasks = taskRepository.findAllById(taskIds);
-            newTasklist.setTasks(tasks);
+            // create list of tasks attache to tasklist
+            var tasks = tasklistInput.getTasks().stream().map(task -> {
+                task.setTasklist(tasklist);
+                return task;
+            }).toList();
+            tasklist.setTasks(tasks);
         }
 
-        var updatedUsers = userRepository.saveAll(users);
-        if (updatedUsers == null)
-            return Optional.empty();
+        // attach each user to the tasklist
+        users = users.stream().map(user -> user.addTasklist(tasklist)).toList();
 
         return Optional.ofNullable(tasklistRepository.save(tasklist));
     }
 
     public Optional<Tasklist> getById(AuthenticatedUser authenticatedUser, Long id) throws UnauthourizedException {
-        if (authenticatedUser.getId().equals(id)) {
-            var tasklist = tasklistRepository.findById(id);
-            if (tasklist.isPresent() && tasklist.get().hasUser(authenticatedUser.getId())) {
-                return tasklist;
-            }
-            return Optional.empty();
+        var tasklist = tasklistRepository.findById(id);
+        if (tasklist.isPresent() && tasklist.get().hasUser(authenticatedUser.getId())) {
+            return tasklist;
         } else {
             throw new UnauthourizedException();
         }

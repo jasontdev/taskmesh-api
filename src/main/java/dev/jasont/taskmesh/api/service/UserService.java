@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.UserRepository;
@@ -19,14 +20,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Optional<User> createUser(AuthenticatedUser authUser, User user) throws UnauthourizedException {
-        if(authUser.getId().equals(user.getId()))
+        if(!authUser.getId().equals(user.getId()))
             throw new UnauthourizedException();
         return Optional.ofNullable(userRepository.save(user));
     }
 
     public Optional<User> getUser(AuthenticatedUser authUser, String id) throws UnauthourizedException {
-        if(authUser.getId().equals(id))
+        if(!authUser.getId().equals(id))
             throw new UnauthourizedException();
 
         return userRepository.findById(id);

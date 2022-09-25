@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import dev.jasont.taskmesh.api.entity.Task;
 import dev.jasont.taskmesh.api.entity.Tasklist;
 import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.repository.TasklistRepository;
@@ -35,6 +34,7 @@ public class UserServiceTests {
 
     @BeforeEach
     public void clearDatabase() {
+        tasklistRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -66,24 +66,15 @@ public class UserServiceTests {
     @Test
     public void getUserThatExists() throws UnauthourizedException {
         var userId = "user_id";
-        var user = new User(userId);
         var authUser = new AuthenticatedUser(userId);
         var tasklist = new Tasklist("Test tasklist");
-        var task = new Task("Test task");
+        var user = new User(userId);
 
-        user = userRepository.save(user);
-        Assertions.assertNotNull(user);
-
-        tasklist.addTask(task);
-        tasklist.addUser(user);
+        user.addTasklist(tasklist);
         tasklistRepository.save(tasklist);
-        userRepository.save(user);
 
         var savedUser = userService.getUser(authUser, userId);
-
         Assertions.assertTrue(savedUser.isPresent());
-        Assertions.assertEquals("Test tasklist", savedUser.get().getTasklists().get(0).getName());
-        Assertions.assertEquals("Test task", savedUser.get().getTasklists().get(0).getTasks().get(0).getName());
         Assertions.assertEquals(1, savedUser.get().getTasklists().size());
     }
 
@@ -98,7 +89,7 @@ public class UserServiceTests {
     @Test
     public void getUserNotAuthorized() {
         var user = new User("user_id");
-        var authUser = new AuthenticatedUser( "wrong_user_id" );
+        var authUser = new AuthenticatedUser("wrong_user_id");
         userRepository.save(user);
 
         Assertions.assertThrows(UnauthourizedException.class,

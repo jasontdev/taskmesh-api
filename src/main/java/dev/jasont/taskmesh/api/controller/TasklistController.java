@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jasont.taskmesh.api.entity.Tasklist;
+import dev.jasont.taskmesh.api.entity.TasklistInput;
 import dev.jasont.taskmesh.api.service.TasklistService;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -24,10 +25,10 @@ public class TasklistController {
     }
 
     @PostMapping("/tasklist")
-    public ResponseEntity<Tasklist> createTasklist(Principal accessToken, @RequestBody Tasklist tasklist) {
+    public ResponseEntity<Tasklist> createTasklist(Principal accessToken, @RequestBody TasklistInput tasklistInput) {
         try {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
-            return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklist));
+            return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklistInput));
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();
         }

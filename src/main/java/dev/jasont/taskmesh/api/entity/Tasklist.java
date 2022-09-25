@@ -9,8 +9,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,11 +24,14 @@ public class Tasklist {
     private Long id;
     private String name;
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("tasklist")
     private List<Task> tasks = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "tasklists")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_tasklist",
+            joinColumns = @JoinColumn(name = "tasklist"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnoreProperties("tasklists")
     private List<User> users = new ArrayList<>();
 
@@ -71,8 +76,6 @@ public class Tasklist {
 
     public void addUser(User user) {
         users.add(user);
-        var userTasklists = user.getTasklists();
-        userTasklists.add(this);
     }
 
     public void addTask(Task task) {
@@ -81,6 +84,6 @@ public class Tasklist {
     }
 
     public boolean hasUser(String userId) {
-        return users.stream().anyMatch(user -> user.getId() == userId);
+        return users.stream().anyMatch(user -> user.getId().equals(userId));
     }
 }

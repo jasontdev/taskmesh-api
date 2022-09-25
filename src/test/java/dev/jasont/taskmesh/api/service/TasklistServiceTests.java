@@ -9,8 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import dev.jasont.taskmesh.api.entity.Tasklist;
+import dev.jasont.taskmesh.api.entity.TasklistInput;
 import dev.jasont.taskmesh.api.entity.User;
+import dev.jasont.taskmesh.api.repository.TasklistRepository;
 import dev.jasont.taskmesh.api.repository.UserRepository;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -22,14 +23,18 @@ public class TasklistServiceTests {
 
     private TasklistService tasklistService;
     private UserRepository userRepository;
+    private TasklistRepository tasklistRepository;
 
-    public TasklistServiceTests(@Autowired TasklistService tasklistService, @Autowired UserRepository userRepository) {
+    public TasklistServiceTests(@Autowired TasklistService tasklistService, @Autowired UserRepository userRepository,
+            @Autowired TasklistRepository tasklistRepository) {
+        this.tasklistRepository = tasklistRepository;
         this.tasklistService = tasklistService;
         this.userRepository = userRepository;
     }
 
     @BeforeEach
     public void setup() {
+        tasklistRepository.deleteAll();
         userRepository.deleteAll(); // clean-up from previous tests
 
         var user = new User();
@@ -45,13 +50,10 @@ public class TasklistServiceTests {
     @Test
     public void createEmptyTasklist() throws UnauthourizedException {
         var authenticatedUser = new AuthenticatedUser("user");
-        var tasklist = new Tasklist("Test tasklist");
+        var tasklistInput = new TasklistInput("Test tasklist");
+        tasklistInput.getUserIds().add("user");
 
-        var user = userRepository.findById("user");
-        Assertions.assertTrue(user.isPresent(), "Test user not found");
-
-        tasklist.addUser(user.get());
-        var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklist);
-        Assertions.assertTrue(savedTasklist.isPresent(), "Failed to retreive tasklist");
+        var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklistInput);
+        Assertions.assertNotNull(savedTasklist);
     }
 }

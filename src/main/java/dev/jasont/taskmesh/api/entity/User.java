@@ -14,10 +14,7 @@ public class User {
     @Id
     private String id;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_tasklist",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "tasklist_id"))
+    @ManyToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("users")
     private List<Tasklist> tasklists = new ArrayList<>();
 
@@ -42,5 +39,12 @@ public class User {
 
     public void setTasklists(List<Tasklist> tasklists) {
         this.tasklists = tasklists;
+    }
+
+    public User addTasklist(Tasklist tasklist) {
+        tasklist.addUser(this);
+        tasklists.add(tasklist);
+
+        return this;
     }
 }
