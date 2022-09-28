@@ -11,7 +11,7 @@ public class TasklistUserMapper {
         return new TasklistUser(user.getId());
     }
 
-    public List<TasklistUser> fromUsers(List<User> users) {
+    public static List<TasklistUser> fromUsers(List<User> users) {
         return users.stream().map(TasklistUserMapper::fromUser).toList(); 
     }
 }
