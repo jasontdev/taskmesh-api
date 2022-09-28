@@ -86,4 +86,8 @@ public class Tasklist {
     public boolean hasUser(String userId) {
         return users.stream().anyMatch(user -> user.getId().equals(userId));
     }
+
+    public boolean hasTasks() {
+        return this.tasks != null && tasks.size() > 0;
+    }
 }
