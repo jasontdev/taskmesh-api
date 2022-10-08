@@ -47,4 +47,8 @@ public class User {
 
         return this;
     }
+
+    public boolean hasTasklists() {
+        return tasklists != null && tasklists.size() > 0;
+    }
 }

@@ -17,8 +17,8 @@ import dev.jasont.taskmesh.api.util.UnauthourizedException;
 @Service
 public class TasklistService {
 
-    private TasklistRepository tasklistRepository;
-    private UserRepository userRepository;
+    private final TasklistRepository tasklistRepository;
+    private final UserRepository userRepository;
 
     public TasklistService(@Autowired TasklistRepository tasklistRepository,
             @Autowired UserRepository userRepository) {
@@ -35,7 +35,7 @@ public class TasklistService {
             throw new UnauthourizedException();
 
         var users = userRepository.findAllById(tasklistInput.getUserIds());
-        if (users.size() < 0) {
+        if (users.size() == 0) {
             // TODO: throw an exception so controller knows why we are returning empty
             return Optional.empty();
         }
