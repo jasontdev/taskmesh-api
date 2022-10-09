@@ -8,9 +8,9 @@ import dev.jasont.taskmesh.api.entity.User;
 import java.util.ArrayList;
 
 public class UserMapper {
-    public static StoredUser fromUser(User user) {
+    public static StoredUser fromUserToDTO(User user) {
         ArrayList<StoredTasklist> tasklists = user.hasTasklists() ?
-                new ArrayList<>(TasklistMapper.fromTasklists(user.getTasklists())) : null;
+                new ArrayList<>(TasklistMapper.tasklistsToDTO(user.getTasklists())) : null;
 
         return new StoredUser(user.getId(), tasklists);
     }

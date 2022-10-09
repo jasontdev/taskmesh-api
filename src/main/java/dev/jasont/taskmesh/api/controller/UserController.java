@@ -1,7 +1,6 @@
 package dev.jasont.taskmesh.api.controller;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import dev.jasont.taskmesh.api.dto.NewUser;
 import dev.jasont.taskmesh.api.dto.StoredUser;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.jasont.taskmesh.api.entity.User;
 import dev.jasont.taskmesh.api.service.UserService;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -34,7 +32,7 @@ public class UserController {
         try {
             var requestingUser = new AuthenticatedUser(token.getName());
             var savedUser = userService.createUser(requestingUser, UserMapper.fromNewUser(newUser));
-            return savedUser.map(user -> ResponseEntity.ok(UserMapper.fromUser(user))).orElseGet(() -> ResponseEntity.notFound().build());
+            return savedUser.map(user -> ResponseEntity.ok(UserMapper.fromUserToDTO(user))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
         } catch (Exception exception) {
@@ -49,7 +47,7 @@ public class UserController {
         try {
             var requestingUser = new AuthenticatedUser(token.getName());
             var storedUser = userService.getUser(requestingUser, id);
-            return storedUser.map(user -> ResponseEntity.ok(UserMapper.fromUser(user))).orElseGet(() -> ResponseEntity.notFound().build());
+            return storedUser.map(user -> ResponseEntity.ok(UserMapper.fromUserToDTO(user))).orElseGet(() -> ResponseEntity.notFound().build());
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();

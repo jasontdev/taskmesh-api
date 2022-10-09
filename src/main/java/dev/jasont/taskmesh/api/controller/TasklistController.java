@@ -1,7 +1,6 @@
 package dev.jasont.taskmesh.api.controller;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import dev.jasont.taskmesh.api.dto.NewTasklist;
 import dev.jasont.taskmesh.api.dto.StoredTasklist;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.jasont.taskmesh.api.entity.Tasklist;
-import dev.jasont.taskmesh.api.entity.TasklistInput;
 import dev.jasont.taskmesh.api.service.TasklistService;
 import dev.jasont.taskmesh.api.util.AuthenticatedUser;
 import dev.jasont.taskmesh.api.util.UnauthourizedException;
@@ -34,7 +31,7 @@ public class TasklistController {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
             var tasklist = tasklistService.createTasklist(authenticatedUser, newTasklist);
 
-            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.fromTasklist(value))).orElseGet(() -> ResponseEntity.notFound().build());
+            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.tasklistToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();
         }
@@ -46,7 +43,7 @@ public class TasklistController {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
             var tasklist = tasklistService.getById(authenticatedUser, tasklistId);
 
-            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.fromTasklist(value))).orElseGet(() -> ResponseEntity.notFound().build());
+            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.tasklistToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();

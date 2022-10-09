@@ -22,7 +22,7 @@ public class TasklistMapperTests {
         var expectedTasklistUsers = new ArrayList<TasklistUser>();
         expectedTasklistUsers.add(new TasklistUser("user_id"));
         var expectedTasklist = new StoredTasklist(1L, "Testing task list", expectedTasklistUsers , new ArrayList<StoredTask>());
-        var actualTasklist = TasklistMapper.fromTasklist(tasklist);
+        var actualTasklist = TasklistMapper.tasklistToDTO(tasklist);
 
         Assertions.assertEquals(expectedTasklist, actualTasklist);
     }
@@ -45,7 +45,7 @@ public class TasklistMapperTests {
         expectedTasks.add(new StoredTask(1L, 1L, "Testing task", false));
 
         var expectedTasklist = new StoredTasklist(1L, "Testing task list", expectedTasklistUsers , expectedTasks);
-        var actualTasklist = TasklistMapper.fromTasklist(tasklist);
+        var actualTasklist = TasklistMapper.tasklistToDTO(tasklist);
 
         Assertions.assertEquals(expectedTasklist, actualTasklist);
     }

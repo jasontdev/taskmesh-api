@@ -13,7 +13,7 @@ import dev.jasont.taskmesh.api.entity.User;
 
 public class TasklistMapper {
 
-    public static StoredTasklist fromTasklist(Tasklist tasklist) {
+    public static StoredTasklist tasklistToDTO(Tasklist tasklist) {
         ArrayList<StoredTask> tasks = new ArrayList<>();
         if (tasklist.hasTasks()) {
             tasks.addAll(TaskMapper.fromTasks(tasklist.getTasks()));
@@ -25,8 +25,8 @@ public class TasklistMapper {
         return new StoredTasklist(tasklist.getId(), tasklist.getName(), users, tasks);
     }
 
-    public static List<StoredTasklist> fromTasklists(List<Tasklist> tasklists) {
-        return tasklists.stream().map(TasklistMapper::fromTasklist).toList();
+    public static List<StoredTasklist> tasklistsToDTO(List<Tasklist> tasklists) {
+        return tasklists.stream().map(TasklistMapper::tasklistToDTO).toList();
     }
 
     public static Tasklist fromNewTasklist(NewTasklist newTasklist, List<User> users) {
