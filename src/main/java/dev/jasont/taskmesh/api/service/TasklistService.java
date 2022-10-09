@@ -3,6 +3,11 @@ package dev.jasont.taskmesh.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import dev.jasont.taskmesh.api.dto.NewTask;
+import dev.jasont.taskmesh.api.dto.NewTasklist;
+import dev.jasont.taskmesh.api.dto.NewUser;
+import dev.jasont.taskmesh.api.dto.TasklistUser;
+import dev.jasont.taskmesh.api.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,33 +33,34 @@ public class TasklistService {
 
     @Transactional
     public Optional<Tasklist> createTasklist(AuthenticatedUser authenticatedUser,
-            TasklistInput tasklistInput) throws UnauthourizedException {
+            NewTasklist newTasklist) throws UnauthourizedException {
 
         // TODO: make sure all users are contacts of authenticatedUser
-        if (!tasklistInput.getUserIds().stream().anyMatch(userId -> authenticatedUser.getId().equals(userId)))
+        if (newTasklist.users().stream().noneMatch(user -> authenticatedUser.getId().equals(user.userId())))
             throw new UnauthourizedException();
 
-        var users = userRepository.findAllById(tasklistInput.getUserIds());
-        if (users.size() == 0) {
-            // TODO: throw an exception so controller knows why we are returning empty
+        var userIds = newTasklist.users().stream().map(TasklistUser::userId).toList();
+        var users = userRepository.findAllById(userIds);
+        if (users.size() < 1)
             return Optional.empty();
-        }
 
         // prepare new Tasklist
-        var tasklist = new Tasklist(tasklistInput.getName());
-        if (tasklistInput.hasTasks()) {
+        var tasklist = new Tasklist(newTasklist.name());
+        if (newTasklist.tasks().size() > 0) {
             // create list of tasks attache to tasklist
-            var tasks = tasklistInput.getTasks().stream().map(task -> {
+            var tasks = newTasklist.tasks().stream().map(newTask -> {
+                var task = new Task(newTask.name());
                 task.setTasklist(tasklist);
                 return task;
             }).toList();
+
             tasklist.setTasks(tasks);
         }
 
         // attach each user to the tasklist
-        users = users.stream().map(user -> user.addTasklist(tasklist)).toList();
+        users.forEach(user -> user.addTasklist(tasklist));
 
-        return Optional.ofNullable(tasklistRepository.save(tasklist));
+        return Optional.of(tasklistRepository.save(tasklist));
     }
 
     public Optional<Tasklist> getById(AuthenticatedUser authenticatedUser, Long id) throws UnauthourizedException {

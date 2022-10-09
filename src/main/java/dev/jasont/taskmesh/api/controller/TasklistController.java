@@ -1,7 +1,11 @@
 package dev.jasont.taskmesh.api.controller;
 
 import java.security.Principal;
+import java.util.Optional;
 
+import dev.jasont.taskmesh.api.dto.NewTasklist;
+import dev.jasont.taskmesh.api.dto.StoredTasklist;
+import dev.jasont.taskmesh.api.util.TasklistMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,27 +22,32 @@ import dev.jasont.taskmesh.api.util.UnauthourizedException;
 
 @RestController
 public class TasklistController {
-    private TasklistService tasklistService;
+    private final TasklistService tasklistService;
 
     public TasklistController(@Autowired TasklistService tasklistService) {
         this.tasklistService = tasklistService;
     }
 
     @PostMapping("/tasklist")
-    public ResponseEntity<Tasklist> createTasklist(Principal accessToken, @RequestBody TasklistInput tasklistInput) {
+    public ResponseEntity<StoredTasklist> createTasklist(Principal accessToken, @RequestBody NewTasklist newTasklist) {
         try {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
-            return ResponseEntity.of(tasklistService.createTasklist(authenticatedUser, tasklistInput));
+            var tasklist = tasklistService.createTasklist(authenticatedUser, newTasklist);
+
+            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.fromTasklist(value))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping("/tasklist/{id}")
-    public ResponseEntity<Tasklist> getTasklist(Principal accessToken, @PathVariable("id") Long tasklistId) {
+    public ResponseEntity<StoredTasklist> getTasklist(Principal accessToken, @PathVariable("id") Long tasklistId) {
         try {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
-            return ResponseEntity.of(tasklistService.getById(authenticatedUser, tasklistId));
+            var tasklist = tasklistService.getById(authenticatedUser, tasklistId);
+
+            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.fromTasklist(value))).orElseGet(() -> ResponseEntity.notFound().build());
+
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();
         }

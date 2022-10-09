@@ -2,6 +2,9 @@ package dev.jasont.taskmesh.api.service;
 
 import java.util.ArrayList;
 
+import dev.jasont.taskmesh.api.dto.NewTask;
+import dev.jasont.taskmesh.api.dto.NewTasklist;
+import dev.jasont.taskmesh.api.dto.TasklistUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,29 +56,34 @@ public class TasklistServiceTests {
     @Test
     public void createEmptyTasklist() throws UnauthourizedException {
         var authenticatedUser = new AuthenticatedUser("user");
-        var tasklistInput = new TasklistInput("Test tasklist");
-        tasklistInput.getUserIds().add("user");
 
-        var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklistInput);
-        Assertions.assertNotNull(savedTasklist);
+        var tasklistUsers = new ArrayList<TasklistUser>();
+        tasklistUsers.add(new TasklistUser("user"));
+
+        var newTasklist = new NewTasklist("Test tasklist",tasklistUsers, new ArrayList<NewTask>());
+
+        var savedTasklist = tasklistService.createTasklist(authenticatedUser, newTasklist);
+        Assertions.assertTrue(savedTasklist.isPresent());
         Assertions.assertEquals("user", savedTasklist.get().getUsers().get(0).getId());
     }
 
     @Test
     public void createTasklistWithTasks() throws UnauthourizedException {
         var authenticatedUser = new AuthenticatedUser("user");
-        var tasks = new ArrayList<Task>();
-        tasks.add( new Task("First task") );
-        tasks.add( new Task("Second task") );
-        tasks.add( new Task("Third task") );
+        var tasks = new ArrayList<NewTask>();
+        tasks.add( new NewTask("First task", null) );
+        tasks.add( new NewTask("Second task", null) );
+        tasks.add( new NewTask("Third task", null) );
 
-        var tasklistInput = new TasklistInput("Test tasklist");
-        tasklistInput.setTasks(tasks);
-        tasklistInput.getUserIds().add("user");
+        var tasklistUsers = new ArrayList<TasklistUser>();
+        tasklistUsers.add(new TasklistUser("user"));
 
-        var savedTasklist = tasklistService.createTasklist(authenticatedUser, tasklistInput);
-        Assertions.assertNotNull(savedTasklist);
+        var newTasklist = new NewTasklist("Test tasklist", tasklistUsers, tasks);
+
+        var savedTasklist = tasklistService.createTasklist(authenticatedUser, newTasklist);
+        Assertions.assertTrue(savedTasklist.isPresent());
         Assertions.assertEquals("user", savedTasklist.get().getUsers().get(0).getId());
         Assertions.assertEquals(3, savedTasklist.get().getTasks().size());
+        Assertions.assertTrue(savedTasklist.get().getTasks().stream().allMatch(task -> task.getTasklist() == savedTasklist.get()));
     }
 }

@@ -1,7 +1,11 @@
 package dev.jasont.taskmesh.api.controller;
 
 import java.security.Principal;
+import java.util.Optional;
 
+import dev.jasont.taskmesh.api.dto.NewUser;
+import dev.jasont.taskmesh.api.dto.StoredUser;
+import dev.jasont.taskmesh.api.util.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +29,12 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<User> createUser(Principal token, @RequestBody User user) {
+    public ResponseEntity<StoredUser> createUser(Principal token, @RequestBody NewUser newUser) {
         // TODO: validate user before attempting to save
         try {
             var requestingUser = new AuthenticatedUser(token.getName());
-            return ResponseEntity.of(userService.createUser(requestingUser, user));
-
+            var savedUser = userService.createUser(requestingUser, UserMapper.fromNewUser(newUser));
+            return savedUser.map(user -> ResponseEntity.ok(UserMapper.fromUser(user))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
         } catch (Exception exception) {
@@ -40,11 +44,12 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUser(Principal token,
+    public ResponseEntity<StoredUser> getUser(Principal token,
             @PathVariable("id") String id) {
         try {
             var requestingUser = new AuthenticatedUser(token.getName());
-            return ResponseEntity.of(userService.getUser(requestingUser, id));
+            var storedUser = userService.getUser(requestingUser, id);
+            return storedUser.map(user -> ResponseEntity.ok(UserMapper.fromUser(user))).orElseGet(() -> ResponseEntity.notFound().build());
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.status(403).build();
