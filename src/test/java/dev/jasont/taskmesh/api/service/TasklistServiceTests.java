@@ -27,9 +27,9 @@ import dev.jasont.taskmesh.api.util.UnauthourizedException;
 @ActiveProfiles("test")
 public class TasklistServiceTests {
 
-    private TasklistService tasklistService;
-    private UserRepository userRepository;
-    private TasklistRepository tasklistRepository;
+    private final TasklistService tasklistService;
+    private final UserRepository userRepository;
+    private final TasklistRepository tasklistRepository;
 
     public TasklistServiceTests(@Autowired TasklistService tasklistService, @Autowired UserRepository userRepository,
             @Autowired TasklistRepository tasklistRepository) {

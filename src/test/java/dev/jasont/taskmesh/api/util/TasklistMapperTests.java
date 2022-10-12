@@ -22,7 +22,7 @@ public class TasklistMapperTests {
         var expectedTasklistUsers = new ArrayList<TasklistUser>();
         expectedTasklistUsers.add(new TasklistUser("user_id"));
         var expectedTasklist = new StoredTasklist(1L, "Testing task list", expectedTasklistUsers , new ArrayList<StoredTask>());
-        var actualTasklist = TasklistMapper.tasklistToDTO(tasklist);
+        var actualTasklist = TasklistMapper.mapTasklist().toStoredTasklist(tasklist);
 
         Assertions.assertEquals(expectedTasklist, actualTasklist);
     }
@@ -45,7 +45,7 @@ public class TasklistMapperTests {
         expectedTasks.add(new StoredTask(1L, 1L, "Testing task", false));
 
         var expectedTasklist = new StoredTasklist(1L, "Testing task list", expectedTasklistUsers , expectedTasks);
-        var actualTasklist = TasklistMapper.tasklistToDTO(tasklist);
+        var actualTasklist = TasklistMapper.mapTasklist().toStoredTasklist(tasklist);
 
         Assertions.assertEquals(expectedTasklist, actualTasklist);
     }
@@ -60,7 +60,7 @@ public class TasklistMapperTests {
         tasklistUsers.add(new TasklistUser("user_id"));
         var newTasklist = new NewTasklist("Test tasklist", tasklistUsers, new ArrayList<>());
 
-        var tasklist = TasklistMapper.fromNewTasklist(newTasklist, users);
+        var tasklist = TasklistMapper.mapTasklist().fromNewTasklist(newTasklist, users);
         Assertions.assertEquals("user_id", tasklist.getUsers().get(0).getId());
         Assertions.assertEquals(user, tasklist.getUsers().get(0));
         Assertions.assertEquals(tasklist, user.getTasklists().get(0));
@@ -85,7 +85,7 @@ public class TasklistMapperTests {
         tasks.add(taskTwo);
         var newTasklist = new NewTasklist("Test tasklist", tasklistUsers, tasks);
 
-        var tasklist = TasklistMapper.fromNewTasklist(newTasklist, users);
+        var tasklist = TasklistMapper.mapTasklist().fromNewTasklist(newTasklist, users);
         Assertions.assertEquals("user_id", tasklist.getUsers().get(0).getId());
         Assertions.assertEquals(user, tasklist.getUsers().get(0));
         Assertions.assertEquals(tasklist, user.getTasklists().get(0));

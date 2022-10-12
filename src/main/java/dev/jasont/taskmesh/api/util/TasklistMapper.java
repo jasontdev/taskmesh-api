@@ -13,32 +13,36 @@ import dev.jasont.taskmesh.api.entity.User;
 
 public class TasklistMapper {
 
-    public static StoredTasklist tasklistToDTO(Tasklist tasklist) {
+    public StoredTasklist toStoredTasklist(Tasklist tasklist) {
         ArrayList<StoredTask> tasks = new ArrayList<>();
         if (tasklist.hasTasks()) {
-            tasks.addAll(TaskMapper.fromTasks(tasklist.getTasks()));
+            tasks.addAll(TaskMapper.taskToStoredTasks(tasklist.getTasks()));
         }
 
         // Tasklist should always have users
-        List<TasklistUser> users = TasklistUserMapper.fromUsers(tasklist.getUsers());
+        List<TasklistUser> users = TasklistUserMapper.usersToTasklistUsers(tasklist.getUsers());
 
         return new StoredTasklist(tasklist.getId(), tasklist.getName(), users, tasks);
     }
 
-    public static List<StoredTasklist> tasklistsToDTO(List<Tasklist> tasklists) {
-        return tasklists.stream().map(TasklistMapper::tasklistToDTO).toList();
+    public List<StoredTasklist> toStoredTasklists(List<Tasklist> tasklists) {
+        return tasklists.stream().map(TasklistMapper.mapTasklist()::toStoredTasklist).toList();
     }
 
-    public static Tasklist fromNewTasklist(NewTasklist newTasklist, List<User> users) {
+    public Tasklist fromNewTasklist(NewTasklist newTasklist, List<User> users) {
         var tasklist = new Tasklist(newTasklist.name());
-        var tasks = new ArrayList<Task>(TaskMapper.fromNewTasks(newTasklist.tasks(), tasklist));
+        var tasks = new ArrayList<Task>(TaskMapper.newTasksToTasks(newTasklist.tasks(), tasklist));
 
         tasklist.setTasks(tasks);
         users.forEach(user -> user.addTasklist(tasklist));
         return tasklist;
     }
 
-    public static List<Tasklist> fromNewTasklists(List<NewTasklist> newTasklists, List<User> users) {
-        return newTasklists.stream().map(newTasklist -> TasklistMapper.fromNewTasklist(newTasklist, users)).toList();
+    public List<Tasklist> fromNewTasklists(List<NewTasklist> newTasklists, List<User> users) {
+        return newTasklists.stream().map(newTasklist -> TasklistMapper.mapTasklist().fromNewTasklist(newTasklist, users)).toList();
+    }
+
+    public static TasklistMapper mapTasklist() {
+        return new TasklistMapper();
     }
 }

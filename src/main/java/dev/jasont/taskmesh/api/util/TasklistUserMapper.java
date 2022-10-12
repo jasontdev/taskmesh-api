@@ -7,11 +7,11 @@ import dev.jasont.taskmesh.api.entity.User;
 
 public class TasklistUserMapper {
     
-    public static TasklistUser fromUser(User user) {
+    public static TasklistUser userToTasklistUser(User user) {
         return new TasklistUser(user.getId());
     }
 
-    public static List<TasklistUser> fromUsers(List<User> users) {
-        return users.stream().map(TasklistUserMapper::fromUser).toList(); 
+    public static List<TasklistUser> usersToTasklistUsers(List<User> users) {
+        return users.stream().map(TasklistUserMapper::userToTasklistUser).toList();
     }
 }

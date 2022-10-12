@@ -12,7 +12,7 @@ public class UserMapperTests {
         var user = new User();
         user.setId("user_id");
 
-        var userDto = UserMapper.fromUserToDTO(user);
+        var userDto = UserMapper.mapUser().toStoredUser(user);
         Assertions.assertEquals("user_id", userDto.id());
     }
 
@@ -24,7 +24,7 @@ public class UserMapperTests {
         var tasklist = new Tasklist("Test tasklist");
         user.addTasklist(tasklist);
 
-        var userDto = UserMapper.fromUserToDTO(user);
+        var userDto = UserMapper.mapUser().toStoredUser(user);
 
         Assertions.assertEquals("user_id", userDto.id());
         Assertions.assertEquals(1, userDto.tasklists().size());
@@ -41,7 +41,7 @@ public class UserMapperTests {
         var tasklistTwo = new Tasklist("Test tasklist two");
         user.addTasklist(tasklistTwo);
 
-        var userDto = UserMapper.fromUserToDTO(user);
+        var userDto = UserMapper.mapUser().toStoredUser(user);
 
         Assertions.assertEquals("user_id", userDto.id());
         Assertions.assertEquals(2, userDto.tasklists().size());

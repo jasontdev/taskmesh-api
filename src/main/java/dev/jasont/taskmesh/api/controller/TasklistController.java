@@ -31,7 +31,9 @@ public class TasklistController {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
             var tasklist = tasklistService.createTasklist(authenticatedUser, newTasklist);
 
-            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.tasklistToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
+            return tasklist.map(value -> ResponseEntity
+                            .ok(TasklistMapper.mapTasklist().toStoredTasklist(value)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();
         }
@@ -43,7 +45,9 @@ public class TasklistController {
             var authenticatedUser = new AuthenticatedUser(accessToken.getName());
             var tasklist = tasklistService.getById(authenticatedUser, tasklistId);
 
-            return tasklist.map(value -> ResponseEntity.ok(TasklistMapper.tasklistToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
+            return tasklist.map(value -> ResponseEntity
+                            .ok(TasklistMapper.mapTasklist().toStoredTasklist(value)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
 
         } catch (UnauthourizedException exception) {
             return ResponseEntity.badRequest().build();

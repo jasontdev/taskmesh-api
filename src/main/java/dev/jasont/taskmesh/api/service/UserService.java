@@ -14,7 +14,7 @@ import dev.jasont.taskmesh.api.util.UnauthourizedException;
 @Service
 public class UserService {
     
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(@Autowired UserRepository userRepository) {
         this.userRepository = userRepository;
